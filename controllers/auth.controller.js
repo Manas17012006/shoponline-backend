@@ -104,7 +104,6 @@ const login = async (req, res) => {
       expiresIn: "7d",
     });
     
-    // Save token to DB
     user.token = token;
     await user.save();
     

@@ -1,29 +1,24 @@
-require('dotenv').config();
-const userModel = require("../models/userModel.model");
+const jwt = require("jsonwebtoken");
 
-async function userauth(req, res, next) {
+const userauth = (req, res, next) => {
   try {
-    const user = await userModel.findOne({
-      token: { $ne: "", $exists: true }
-    });
-    
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Please Login to get started!"
-      });
-    }
-    
-    // Set userId in request and continue
-    req.userId = user._id;
-    next(); // ✅ No response sent before this
-    
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader)
+      return res.status(401).json({ success: false, message: "No token" });
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.id;
+
+    next();
   } catch (err) {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Server error: " + err.message
+      message: "Invalid or expired token",
     });
   }
-}
+};
 
 module.exports = { userauth };
