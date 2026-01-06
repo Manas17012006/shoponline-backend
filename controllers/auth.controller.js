@@ -107,7 +107,6 @@ const login = async (req, res) => {
     user.token = token;
     await user.save();
     
-    // ✅ Return token to frontend
     return res.status(200).json({
       success: true,
       message: "Login successful",
@@ -163,12 +162,12 @@ async function sendVerifyOtp(req, res) {
       });
     }
 
-    if (user.isVerified) {
-      return res.json({
-        success: false,
-        message: "User already verified",
-      });
-    }
+    // if (user.isVerified) {
+    //   return res.json({
+    //     success: false,
+    //     message: "User already verified",
+    //   });
+    // }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
 
